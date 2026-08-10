@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Grievances</title>
+</head>
+<body style="font-family:Arial; margin:40px;">
+
+    <h1>My Grievances</h1>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Category</th>
+            <th>Location</th>
+            <th>Description</th>
+            <th>Status</th>
+        </tr>
+
+        {% for grievance in grievances %}
+        <tr>
+            <td>{{ grievance[0] }}</td>
+            <td>{{ grievance[1] }}</td>
+            <td>{{ grievance[2] }}</td>
+            <td>{{ grievance[3] }}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    <br>
+
+    <a href="/dashboard">Back to Dashboard</a>
+
+</body>
+</html>

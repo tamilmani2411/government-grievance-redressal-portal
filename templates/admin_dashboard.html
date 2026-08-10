@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body style="font-family:Arial; margin:40px;">
+
+    <h1>Admin Dashboard</h1>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>ID</th>
+            <th>Citizen</th>
+            <th>Category</th>
+            <th>Location</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Update</th>
+        </tr>
+
+        {% for grievance in grievances %}
+        <tr>
+            <td>{{ grievance[0] }}</td>
+            <td>{{ grievance[1] }}</td>
+            <td>{{ grievance[2] }}</td>
+            <td>{{ grievance[3] }}</td>
+            <td>{{ grievance[4] }}</td>
+            <td>{{ grievance[5] }}</td>
+            <td>
+                <form method="POST" action="/update_status/{{ grievance[0] }}">
+                    <select name="status">
+                        <option>Pending</option>
+                        <option>In Progress</option>
+                        <option>Resolved</option>
+                    </select>
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    <br>
+
+    <a href="/logout">Logout</a>
+
+</body>
+</html>
