@@ -1,44 +1,174 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Citizen Dashboard</title>
-</head>
-<body style="font-family:Arial; background:#f4f7fb; margin:0;">
-
-<div style="padding:40px; text-align:center;">
 
 ```
-<h1 style="color:#1d4f91;">Citizen Dashboard</h1>
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<h2>Welcome, {{ username }}</h2>
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-<p>Government Grievance Redressal Portal</p>
+<style>
+    body{
+        font-family:'Segoe UI', sans-serif;
+        background:#eef4fb;
+    }
 
-<br>
+    .navbar-custom{
+        background:#0b1f3a;
+    }
 
-<a href="/report">
-    <button style="background:#1d4f91; color:white; padding:12px 25px;
-                   border:none; border-radius:8px; font-size:16px;">
-        Submit Grievance
-    </button>
-</a>
+    .welcome-card{
+        background:linear-gradient(135deg,#0b1f3a,#1d4ed8);
+        color:white;
+        border-radius:24px;
+        padding:40px;
+        box-shadow:0 15px 35px rgba(0,0,0,0.15);
+    }
 
-<br><br>
+    .action-card{
+        background:white;
+        border-radius:20px;
+        padding:30px;
+        text-align:center;
+        box-shadow:0 10px 25px rgba(0,0,0,0.12);
+        transition:0.3s;
+        height:100%;
+    }
 
-<a href="/my_grievances">
-    <button style="background:#2e7d32; color:white; padding:12px 25px;
-                   border:none; border-radius:8px; font-size:16px;">
-        My Grievances
-    </button>
-</a>
+    .action-card:hover{
+        transform:translateY(-6px);
+    }
 
-<br><br>
+    .action-icon{
+        font-size:3rem;
+        color:#2563eb;
+    }
 
-<a href="/logout">Logout</a>
+    .btn-action{
+        border-radius:12px;
+        padding:10px 22px;
+        font-weight:bold;
+    }
+
+    footer{
+        background:#0b1f3a;
+        color:white;
+        text-align:center;
+        padding:15px;
+        margin-top:40px;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<!-- Navbar -->
+
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="bi bi-building"></i> Government Grievance Portal
+        </a>
+
+```
+    <div class="ms-auto">
+        <a href="/logout" class="btn btn-danger">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+    </div>
+</div>
+```
+
+</nav>
+
+<!-- Welcome -->
+
+<div class="container py-5">
+
+```
+<div class="welcome-card mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-8">
+            <h2 class="fw-bold">Welcome, {{ username }}!</h2>
+            <p class="mb-0">
+                Report public infrastructure issues and track the progress of your grievances through the citizen dashboard.
+            </p>
+        </div>
+
+        <div class="col-lg-4 text-center mt-4 mt-lg-0">
+            <i class="bi bi-person-check" style="font-size:5rem;"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Action Cards -->
+<div class="row g-4">
+
+    <div class="col-md-6">
+        <div class="action-card">
+            <i class="bi bi-pencil-square action-icon"></i>
+            <h4 class="mt-3">Report a Grievance</h4>
+            <p class="text-muted">
+                Submit complaints related to roads, street lights, garbage, drainage, water supply, and other public infrastructure issues.
+            </p>
+
+            <a href="/report" class="btn btn-primary btn-action">
+                <i class="bi bi-plus-circle"></i> Submit Complaint
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="action-card">
+            <i class="bi bi-folder-check action-icon"></i>
+            <h4 class="mt-3">My Grievances</h4>
+            <p class="text-muted">
+                View all the complaints you have submitted and track whether they are Pending, In Progress, or Resolved.
+            </p>
+
+            <a href="/my_grievances" class="btn btn-success btn-action">
+                <i class="bi bi-eye"></i> View My Complaints
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<!-- Information -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-3">
+                    <i class="bi bi-info-circle text-primary"></i> Citizen Guidelines
+                </h4>
+
+                <ul class="mb-0">
+                    <li>Provide a clear description of the issue.</li>
+                    <li>Upload a photo of the damaged infrastructure whenever possible.</li>
+                    <li>Enter the correct location of the complaint.</li>
+                    <li>Track the complaint status regularly through the dashboard.</li>
+                    <li>Use respectful and accurate information while submitting grievances.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 ```
 
 </div>
+
+<footer>
+    © 2026 Government Grievance Redressal Portal | J.J. College of Engineering and Technology, Tiruchirappalli
+</footer>
 
 </body>
 </html>

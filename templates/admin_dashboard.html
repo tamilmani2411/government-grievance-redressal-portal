@@ -1,49 +1,421 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+
+```
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    body{
+        font-family:'Segoe UI', sans-serif;
+        background:#eef4fb;
+    }
+
+    .navbar-custom{
+        background:#0b1f3a;
+    }
+
+    .dashboard-title{
+        color:#0b1f3a;
+        font-weight:700;
+    }
+
+    .stat-card{
+        background:white;
+        border-radius:20px;
+        padding:25px;
+        box-shadow:0 10px 25px rgba(0,0,0,0.12);
+        transition:0.3s;
+    }
+
+    .stat-card:hover{
+        transform:translateY(-5px);
+    }
+
+    .table-card{
+        background:white;
+        border-radius:20px;
+        padding:25px;
+        box-shadow:0 10px 25px rgba(0,0,0,0.12);
+    }
+
+    .chart-card{
+        background:white;
+        border-radius:20px;
+        padding:20px;
+        box-shadow:0 10px 25px rgba(0,0,0,0.12);
+    }
+
+    .photo-thumb{
+        width:100px;
+        height:75px;
+        object-fit:cover;
+        border-radius:10px;
+        border:1px solid #ddd;
+        cursor:pointer;
+        transition:0.3s;
+    }
+
+    .photo-thumb:hover{
+        transform:scale(1.08);
+    }
+
+    footer{
+        background:#0b1f3a;
+        color:white;
+        text-align:center;
+        padding:15px;
+        margin-top:40px;
+    }
+
+    .modal-body img{
+        width:100%;
+        border-radius:12px;
+    }
+</style>
+```
+
 </head>
-<body style="font-family:Arial; margin:40px;">
 
-    <h1>Admin Dashboard</h1>
+<body>
 
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>ID</th>
-            <th>Citizen</th>
-            <th>Category</th>
-            <th>Location</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Update</th>
-        </tr>
+<!-- Navbar -->
 
-        {% for grievance in grievances %}
-        <tr>
-            <td>{{ grievance[0] }}</td>
-            <td>{{ grievance[1] }}</td>
-            <td>{{ grievance[2] }}</td>
-            <td>{{ grievance[3] }}</td>
-            <td>{{ grievance[4] }}</td>
-            <td>{{ grievance[5] }}</td>
-            <td>
-                <form method="POST" action="/update_status/{{ grievance[0] }}">
-                    <select name="status">
-                        <option>Pending</option>
-                        <option>In Progress</option>
-                        <option>Resolved</option>
-                    </select>
-                    <button type="submit">Update</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
+<nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="bi bi-building"></i> Government Grievance Portal
+        </a>
 
-    </table>
+```
+    <div class="ms-auto">
+        <a href="/logout" class="btn btn-danger">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+    </div>
+</div>
+```
 
-    <br>
+</nav>
 
-    <a href="/logout">Logout</a>
+<div class="container-fluid py-4 px-4">
+
+```
+<h2 class="dashboard-title mb-4">
+    <i class="bi bi-speedometer2"></i> Administrator Dashboard
+</h2>
+
+<!-- Statistics -->
+<div class="row g-4 mb-4">
+
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <h3>{{ total }}</h3>
+            <p class="text-muted mb-0">Total Complaints</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <h3>{{ pending }}</h3>
+            <p class="text-muted mb-0">Pending</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <h3>{{ progress }}</h3>
+            <p class="text-muted mb-0">In Progress</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card text-center">
+            <h3>{{ resolved }}</h3>
+            <p class="text-muted mb-0">Resolved</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- Search & Filter -->
+<div class="table-card mb-4">
+
+    <h4 class="fw-bold mb-3">
+        <i class="bi bi-search"></i> Search & Filter
+    </h4>
+
+    <form method="GET" action="/admin_dashboard">
+
+        <div class="row g-3 align-items-end">
+
+            <div class="col-md-6">
+                <label class="form-label">Search</label>
+
+                <input
+                    type="text"
+                    class="form-control"
+                    name="search"
+                    placeholder="Search by username, category or location"
+                    value="{{ search if search is defined else '' }}"
+                >
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Status</label>
+
+                <select class="form-select" name="status">
+                    <option value="">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved">Resolved</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">
+                    Apply Filter
+                </button>
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+<!-- Charts -->
+<div class="row g-4 mb-4">
+
+    <div class="col-lg-6">
+        <div class="chart-card">
+            <h5 class="fw-bold mb-3">Complaint Status</h5>
+            <canvas id="statusChart"></canvas>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="chart-card">
+            <h5 class="fw-bold mb-3">Complaints by Category</h5>
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- Complaints Table -->
+<div class="table-card">
+
+    <h4 class="fw-bold mb-3">
+        <i class="bi bi-list-check"></i> Submitted Complaints
+    </h4>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle">
+
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Photo</th>
+                    <th>Category</th>
+                    <th>Location</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Update Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for grievance in grievances %}
+                <tr>
+
+                    <td>{{ grievance[0] }}</td>
+
+                    <td>{{ grievance[1] }}</td>
+
+                    <!-- Clickable Photo -->
+                    <td>
+                        {% if grievance[6] %}
+                            <img
+                                src="{{ url_for('static', filename='uploads/' + grievance[6]) }}"
+                                class="photo-thumb"
+                                alt="Damage Photo"
+                                data-bs-toggle="modal"
+                                data-bs-target="#photoModal"
+                                onclick="showPhoto('{{ url_for('static', filename='uploads/' + grievance[6]) }}')"
+                            >
+                        {% else %}
+                            <span class="text-muted">No Photo</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ grievance[2] }}</td>
+
+                    <td>{{ grievance[3] }}</td>
+
+                    <td>{{ grievance[4] }}</td>
+
+                    <td>
+                        {% if grievance[5] == 'Pending' %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+
+                        {% elif grievance[5] == 'In Progress' %}
+                            <span class="badge bg-info text-dark">In Progress</span>
+
+                        {% elif grievance[5] == 'Resolved' %}
+                            <span class="badge bg-success">Resolved</span>
+
+                        {% else %}
+                            <span class="badge bg-secondary">{{ grievance[5] }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+
+                        <form
+                            method="POST"
+                            action="/update_status/{{ grievance[0] }}"
+                        >
+
+                            <select
+                                name="status"
+                                class="form-select form-select-sm mb-2"
+                            >
+                                <option
+                                    value="Pending"
+                                    {% if grievance[5] == 'Pending' %}selected{% endif %}
+                                >
+                                    Pending
+                                </option>
+
+                                <option
+                                    value="In Progress"
+                                    {% if grievance[5] == 'In Progress' %}selected{% endif %}
+                                >
+                                    In Progress
+                                </option>
+
+                                <option
+                                    value="Resolved"
+                                    {% if grievance[5] == 'Resolved' %}selected{% endif %}
+                                >
+                                    Resolved
+                                </option>
+
+                            </select>
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-sm w-100"
+                            >
+                                Update
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<!-- Photo Preview Modal -->
+
+<div class="modal fade" id="photoModal" tabindex="-1">
+
+```
+<div class="modal-dialog modal-dialog-centered modal-lg">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h5 class="modal-title">Damage Photo Preview</h5>
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+            ></button>
+        </div>
+
+        <div class="modal-body text-center">
+            <img id="modalPhoto" src="">
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<footer>
+    © 2026 Government Grievance Redressal Portal | J.J. College of Engineering and Technology, Tiruchirappalli
+</footer>
+
+<script>
+// ---------------- Photo Preview ----------------
+function showPhoto(photoUrl){
+    document.getElementById('modalPhoto').src = photoUrl;
+}
+
+// ---------------- Status Chart ----------------
+new Chart(document.getElementById('statusChart'), {
+    type: 'pie',
+    data: {
+        labels: ['Pending', 'In Progress', 'Resolved'],
+        datasets: [{
+            data: [{{ pending }}, {{ progress }}, {{ resolved }}]
+        }]
+    }
+});
+
+// ---------------- Category Chart ----------------
+new Chart(document.getElementById('categoryChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ categories | tojson }},
+        datasets: [{
+            label: 'Complaints',
+            data: {{ category_counts | tojson }}
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
